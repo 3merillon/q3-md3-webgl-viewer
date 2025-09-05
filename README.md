@@ -248,7 +248,6 @@ Tip: First click or key press after load will ensure the AudioContext resumes pr
 ## Acknowledgements
 
 - Thomas Diewald — original MD3 parsing work and reference viewer (GPL-2.0-or-later)
-  - Blog: http://thomasdiewald.com/blog/
 - id Software — Quake 3 model format (MD3)
 - Poly Haven — ground textures (CC0): https://polyhaven.com
 - gl-matrix authors — math library (MIT)
