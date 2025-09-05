@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quake 3 MD3 Character Controller</title>
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- True fullscreen canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Overlayed, collapsible GUI with gear icon -->
+  <details id="menu" open>
+    <summary id="menu-summary">
+      <svg class="gear-icon" viewBox="0 0 24 24" width="20" height="20">
+        <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+      </svg>
+      <span class="menu-title">TACTICAL HUD</span>
+    </summary>
+    <div class="panel">
+      <!-- Music Controls - TOP PRIORITY -->
+      <div class="section priority-section">
+        <h3>DEATH METAL CORE</h3>
+        <div class="row">
+          <label class="toggle-label" for="music-enabled">
+            <input type="checkbox" id="music-enabled">
+            <span class="toggle-slider"></span>
+            <span class="toggle-text">ENABLE AUDIO</span>
+          </label>
+        </div>
+        
+        <div class="row">
+          <label for="music-volume">VOLUME:</label>
+          <input id="music-volume" type="range" min="0" max="1" value="0.4" step="0.05" class="metal-slider" />
+          <span id="music-volume-value" class="readout">0.40</span>
+        </div>
+      </div>
+
+      <!-- Model Selection with LOD -->
+      <div class="section">
+        <h3>LOADOUT CONFIG</h3>
+        <div class="row">
+          <label for="character-select">OPERATIVE:</label>
+          <select id="character-select" class="metal-select"></select>
+          <label for="weapon-select">WEAPON:</label>
+          <select id="weapon-select" class="metal-select"></select>
+        </div>
+
+        <!-- Unified LOD Control -->
+        <div class="row">
+          <label for="lod-select">DETAIL LEVEL:</label>
+          <select id="lod-select" class="metal-select">
+            <option value="0" selected>MAXIMUM (LOD 0)</option>
+            <option value="1">MEDIUM (LOD 1)</option>
+            <option value="2">MINIMUM (LOD 2)</option>
+          </select>
+        </div>
+
+        <!-- Skin selection -->
+        <div class="row">
+          <label for="skin-select">SKIN:</label>
+          <select id="skin-select" class="metal-select"></select>
+        </div>
+      </div>
+
+      <!-- Character Status with Multiple States -->
+      <div class="section">
+        <h3>OPERATIVE STATUS</h3>
+        <div class="status-grid">
+          <div class="status-item">
+            <span class="status-label">WEAPON:</span>
+            <span id="status-weapon" class="status-value">UNARMED</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">STANCE:</span>
+            <span id="status-movement" class="status-value">IDLE</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">ACTION:</span>
+            <span id="status-action" class="status-value">READY</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Light Controls -->
+      <div class="section">
+        <h3>ILLUMINATION</h3>
+        <div class="row">
+          <label for="light-elevation">ELEVATION:</label>
+          <input id="light-elevation" type="range" min="5" max="85" value="45" step="5" class="metal-slider" />
+          <span id="light-elevation-value" class="readout">45°</span>
+        </div>
+        <div class="row">
+          <label for="light-azimuth">AZIMUTH:</label>
+          <input id="light-azimuth" type="range" min="0" max="360" value="225" step="15" class="metal-slider" />
+          <span id="light-azimuth-value" class="readout">225°</span>
+        </div>
+        <div class="row">
+          <label for="light-size">COVERAGE:</label>
+          <input id="light-size" type="range" min="200" max="2000" value="800" step="50" class="metal-slider" />
+          <span id="light-size-value" class="readout">800</span>
+        </div>
+      </div>
+
+      <!-- Shadow Mapping -->
+      <div class="section">
+        <h3>SHADOW MAPPING</h3>
+        <div class="row">
+          <label class="toggle-label" for="shadows-enabled">
+            <input type="checkbox" id="shadows-enabled" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-text">ENABLE SHADOWS</span>
+          </label>
+        </div>
+        
+        <div class="row">
+          <label for="shadow-resolution">RESOLUTION:</label>
+          <select id="shadow-resolution" class="metal-select">
+            <option value="512">512×512</option>
+            <option value="1024">1024×1024</option>
+            <option value="2048">2048×2048</option>
+            <option value="4096" selected>4096×4096</option>
+          </select>
+        </div>
+        
+        <div class="row">
+          <label for="shadow-intensity">INTENSITY:</label>
+          <input id="shadow-intensity" type="range" min="0" max="1" value="0.7" step="0.05" class="metal-slider" />
+          <span id="shadow-intensity-value" class="readout">0.70</span>
+        </div>
+        
+        <div class="row">
+          <label for="shadow-bias">BIAS:</label>
+          <input id="shadow-bias" type="range" min="0" max="0.01" value="0.0001" step="0.0001" class="metal-slider" />
+          <span id="shadow-bias-value" class="readout">0.0001</span>
+        </div>
+
+        <div class="row">
+          <label for="poisson-radius">SOFTNESS:</label>
+          <input id="poisson-radius" type="range" min="0.5" max="5" value="3" step="0.05" class="metal-slider" />
+          <span id="poisson-radius-value" class="readout">3.00</span>
+        </div>
+      </div>
+
+      <!-- Controls Info -->
+      <div class="section">
+        <h3>TACTICAL CONTROLS</h3>
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-item"><kbd>WASD</kbd> Movement</div>
+            <div class="control-item"><kbd>SHIFT</kbd> Sprint</div>
+            <div class="control-item"><kbd>SPACE</kbd> Jump</div>
+            <div class="control-item"><kbd>C</kbd> Crouch</div>
+          </div>
+          <div class="control-group">
+            <div class="control-item"><kbd>LMB</kbd> Attack</div>
+            <div class="control-item"><kbd>RMB</kbd> Camera</div>
+            <div class="control-item"><kbd>1-4</kbd> Weapons</div>
+            <div class="control-item"><kbd>CLICK</kbd> Focus</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Actions -->
+      <div class="section">
+        <h3>SPECIAL OPS</h3>
+        <div class="action-grid">
+          <button id="btn-gesture" class="action-btn">GESTURE</button>
+          <button id="btn-drop" class="action-btn">DROP</button>
+          <button id="btn-raise" class="action-btn">RAISE</button>
+          <button id="btn-back-jump" class="action-btn">BACK JUMP</button>
+          <button id="btn-turn" class="action-btn">TURN</button>
+        </div>
+      </div>
+
+      <!-- Animation Override -->
+      <div class="section">
+        <h3>ANIMATION OVERRIDE</h3>
+        <div class="row">
+          <label for="torso-anim-select">TORSO:</label>
+          <select id="torso-anim-select" class="metal-select"></select>
+
+          <label for="legs-anim-select">LEGS:</label>
+          <select id="legs-anim-select" class="metal-select"></select>
+        </div>
+
+        <!-- Master playback -->
+        <div class="row">
+          <button id="play-pause-all" class="control-btn primary">PAUSE ALL</button>
+        </div>
+
+        <!-- Independent timelines -->
+        <div class="timeline-section">
+          <div class="timeline-row">
+            <strong class="timeline-label">UPPER/TORSO</strong>
+            <button id="play-pause-upper" class="control-btn">PAUSE</button>
+            <input id="slider-upper" type="range" min="0" max="0" value="0" step="1" class="timeline-slider" />
+            <span id="readout-upper" class="timeline-readout">0 / 0</span>
+          </div>
+
+          <div class="timeline-row">
+            <strong class="timeline-label">LOWER/LEGS</strong>
+            <button id="play-pause-lower" class="control-btn">PAUSE</button>
+            <input id="slider-lower" type="range" min="0" max="0" value="0" step="1" class="timeline-slider" />
+            <span id="readout-lower" class="timeline-readout">0 / 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

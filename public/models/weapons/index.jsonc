@@ -1,0 +1,8 @@
+{
+  "weapons": [
+    { "stub": true, "name": "shotgun", "hasVariants": true },
+    { "stub": true, "name": "rocketl", "hasVariants": true },
+    { "stub": true, "name": "plasma",  "hasVariants": true },
+    { "stub": true, "name": "gauntlet","hasVariants": false }
+  ]
+}

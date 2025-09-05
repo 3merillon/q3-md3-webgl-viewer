@@ -1,0 +1,24 @@
+{
+  "name": "q3-md3-webgl-viewer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A modern WebGL2 Quake 3 MD3 character viewer/controller with shadow mapping, upper/lower animation blending, weapon attach + muzzle flashes, and procedural death-metal soundtrack. Ships without copyrighted assets; bring your own MD3s.",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/3merillon/q3-md3-webgl-viewer.git"
+  },
+  "author": "3merillon",
+  "dependencies": {
+    "gl-matrix": "^3.4.4"
+  },
+  "devDependencies": {
+    "vite": "^7.1.4"
+  }
+}

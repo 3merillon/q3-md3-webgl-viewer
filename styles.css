@@ -1,0 +1,623 @@
+/* Import retro gaming font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
+
+:root { 
+  color-scheme: dark;
+  --primary-orange: #ff6600;
+  --secondary-orange: #ff8833;
+  --dark-orange: #cc4400;
+  --accent-red: #ff3300;
+  --metal-gray: #444444;
+  --dark-metal: #222222;
+  --light-metal: #666666;
+  --glass-bg: rgba(0, 0, 0, 0.4); /* More transparent */
+  --glass-border: rgba(255, 102, 0, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-accent: #ff6600;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #000;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  color: var(--text-primary);
+  font-family: 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-weight: 500;
+  text-shadow: 0 0 3px rgba(255, 102, 0, 0.3);
+}
+
+/* True fullscreen canvas */
+#webgl-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: #000;
+  border: none;
+  outline: none;
+  z-index: 0;
+  touch-action: none;
+}
+
+@supports (height: 100dvh) {
+  #webgl-canvas { height: 100dvh; }
+}
+
+/* Overlayed collapsible menu with hardcore styling */
+#menu {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  top: max(12px, env(safe-area-inset-top));
+  z-index: 1000;
+  max-width: min(92vw, 420px);
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Press Start 2P', monospace;
+}
+
+#menu-summary {
+  cursor: pointer;
+  user-select: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  box-shadow: 
+    0 0 20px rgba(255, 102, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.6);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 1px;
+  backdrop-filter: blur(8px);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+#menu-summary:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: var(--secondary-orange);
+  box-shadow: 
+    0 0 30px rgba(255, 102, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 12px 48px rgba(0, 0, 0, 0.8);
+}
+
+#menu-summary::-webkit-details-marker { display: none; }
+
+.gear-icon {
+  fill: var(--primary-orange);
+  filter: drop-shadow(0 0 4px rgba(255, 102, 0, 0.5));
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.menu-title {
+  color: var(--text-primary);
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 400;
+  font-size: 10px;
+}
+
+#menu[open] > #menu-summary .gear-icon {
+  animation-duration: 2s;
+}
+
+#menu > .panel {
+  margin-top: 12px;
+  display: grid;
+  gap: 16px;
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  box-shadow: 
+    0 0 30px rgba(255, 102, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 64px rgba(0, 0, 0, 0.4);
+}
+
+/* Section styling with metal aesthetics */
+.section {
+  display: grid;
+  gap: 12px;
+  padding: 12px 0;
+  position: relative;
+}
+
+.section:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 102, 0, 0.2);
+  padding-bottom: 16px;
+}
+
+.section:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-orange), transparent);
+  opacity: 0.3;
+}
+
+.priority-section {
+  background: linear-gradient(135deg, rgba(255, 102, 0, 0.1), rgba(255, 51, 0, 0.05));
+  border: 1px solid rgba(255, 102, 0, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.priority-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-red), var(--primary-orange), var(--accent-red));
+  animation: pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+.section h3 {
+  margin: 0 0 8px 0;
+  font-size: 8px;
+  font-weight: 400;
+  color: var(--text-accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: 'Press Start 2P', monospace;
+  text-shadow: 0 0 8px rgba(255, 102, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Rows and controls */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-height: 32px;
+}
+
+/* Metal-styled controls */
+.control-btn, .action-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--metal-gray), var(--dark-metal));
+  border: 1px solid var(--light-metal);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-weight: 400;
+  cursor: pointer;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  font-family: 'Press Start 2P', monospace;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.control-btn:hover, .action-btn:hover {
+  background: linear-gradient(135deg, var(--light-metal), var(--metal-gray));
+  border-color: var(--primary-orange);
+  box-shadow: 
+    0 0 12px rgba(255, 102, 0, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.control-btn.primary {
+  background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+  border-color: var(--secondary-orange);
+  color: #000;
+  font-weight: 400;
+}
+
+.control-btn.primary:hover {
+  background: linear-gradient(135deg, var(--secondary-orange), var(--primary-orange));
+  box-shadow: 
+    0 0 16px rgba(255, 102, 0, 0.6),
+    0 6px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.control-btn.paused {
+  background: linear-gradient(135deg, var(--accent-red), #990000);
+  border-color: #ff6666;
+}
+
+.control-btn.paused:hover {
+  background: linear-gradient(135deg, #ff6666, var(--accent-red));
+}
+
+/* Fixed dropdown styling */
+.metal-select {
+  background: linear-gradient(135deg, var(--dark-metal), #111111) !important;
+  border: 1px solid var(--metal-gray) !important;
+  border-radius: 4px;
+  color: var(--text-primary) !important;
+  padding: 6px 12px;
+  font-size: 9px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.metal-select:hover, .metal-select:focus {
+  border-color: var(--primary-orange) !important;
+  background: linear-gradient(135deg, #333333, var(--dark-metal)) !important;
+  box-shadow: 
+    0 0 8px rgba(255, 102, 0, 0.3),
+    inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+/* Fix option styling */
+.metal-select option {
+  background: var(--dark-metal) !important;
+  color: var(--text-primary) !important;
+  padding: 4px 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+}
+
+.metal-slider {
+  flex: 1 1 120px;
+  min-width: 80px;
+  height: 6px;
+  background: linear-gradient(90deg, var(--dark-metal), var(--metal-gray));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.metal-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+  border: 2px solid var(--secondary-orange);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 0 8px rgba(255, 102, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.metal-slider::-webkit-slider-thumb:hover {
+  background: linear-gradient(135deg, var(--secondary-orange), var(--primary-orange));
+  box-shadow: 
+    0 0 12px rgba(255, 102, 0, 0.7),
+    0 3px 6px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+
+.metal-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+  border: 2px solid var(--secondary-orange);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 0 8px rgba(255, 102, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom toggle switches */
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 8px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.toggle-label input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 24px;
+  background: var(--dark-metal);
+  border: 1px solid var(--metal-gray);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--light-metal), var(--metal-gray));
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-label input[type="checkbox"]:checked + .toggle-slider {
+  background: var(--primary-orange);
+  border-color: var(--secondary-orange);
+  box-shadow: 
+    0 0 12px rgba(255, 102, 0, 0.4),
+    inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-label input[type="checkbox"]:checked + .toggle-slider::before {
+  transform: translateX(26px);
+  background: linear-gradient(135deg, #ffffff, #dddddd);
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.3);
+}
+
+label {
+  font-size: 8px;
+  font-weight: 400;
+  white-space: nowrap;
+  min-width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Status display */
+.status-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(255, 102, 0, 0.1), rgba(255, 51, 0, 0.05));
+  border: 1px solid rgba(255, 102, 0, 0.2);
+  border-radius: 6px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.status-label {
+  font-size: 7px;
+  font-weight: 400;
+  color: var(--text-accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.status-value {
+  font-size: 8px;
+  font-weight: 400;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Controls info grid */
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-item {
+  font-size: 7px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+kbd {
+  background: linear-gradient(135deg, var(--metal-gray), var(--dark-metal));
+  border: 1px solid var(--light-metal);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 6px;
+  font-weight: 400;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Action buttons grid */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  font-size: 7px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Timeline controls */
+.timeline-section {
+  display: grid;
+  gap: 12px;
+}
+
+.timeline-row {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.timeline-label {
+  font-size: 7px;
+  font-weight: 400;
+  color: var(--text-accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 80px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.timeline-slider {
+  flex: 1;
+  min-width: 120px;
+}
+
+.timeline-readout, .readout {
+  min-width: 60px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 7px;
+  font-weight: 400;
+  background: linear-gradient(135deg, var(--dark-metal), #111111);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--metal-gray);
+  color: var(--text-primary);
+  font-family: 'Press Start 2P', monospace;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollbar styling */
+#menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+#menu::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+#menu::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+  border-radius: 4px;
+  border: 1px solid var(--secondary-orange);
+}
+
+#menu::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--secondary-orange), var(--primary-orange));
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  #menu {
+    max-width: calc(100vw - 24px);
+  }
+  
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeline-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .action-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Glowing effects for active states */
+.metal-select:focus,
+.metal-slider:focus,
+.control-btn:focus,
+.action-btn:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px rgba(255, 102, 0, 0.5),
+    0 0 16px rgba(255, 102, 0, 0.3);
+}
+
+/* Animation for priority section */
+@keyframes energyFlow {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+.priority-section {
+  background-size: 200% 200%;
+  animation: energyFlow 4s ease infinite;
+}

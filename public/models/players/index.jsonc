@@ -1,0 +1,8 @@
+{
+  "players": [
+    { "stub": true, "name": "sarge",     "skins": ["default", "blue", "red", "krusade", "roderic"], "hasVariants": true },
+    { "stub": true, "name": "grunt",     "skins": ["default", "blue", "red", "stripe"],             "hasVariants": true },
+    { "stub": true, "name": "major",     "skins": ["default", "blue", "red", "daemia"],             "hasVariants": true },
+    { "stub": true, "name": "visor",     "skins": ["default", "blue", "red", "gorre"],              "hasVariants": true }
+  ]
+}
